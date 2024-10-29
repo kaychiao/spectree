@@ -272,6 +272,7 @@ class QuartPlugin(BasePlugin):
                     )
 
                 return self.config.page_templates[ui].format(
+                    swagger_url=self.swagger_url,
                     spec_url=spec_url,
                     spec_path=self.config.path,
                     **self.config.swagger_oauth2_config(),
@@ -291,6 +292,7 @@ class QuartPlugin(BasePlugin):
                     f"/{self.config.path}/{ui}/",
                     endpoint=f"openapi_{self.config.path}_{ui}",
                     view_func=lambda ui=ui: self.config.page_templates[ui].format(
+                        swagger_url=self.swagger_url,
                         spec_url=self.config.spec_url,
                         spec_path=self.config.path,
                         **self.config.swagger_oauth2_config(),

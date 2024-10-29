@@ -48,6 +48,7 @@ class BasePlugin(Generic[BackendRoute]):
         self.spectree = spectree
         self.config: Configuration = spectree.config
         self.logger = logging.getLogger(__name__)
+        self.swagger_url = self.config.swagger_url
 
     def register_route(self, app: Any):
         """

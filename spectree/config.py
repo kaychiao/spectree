@@ -105,6 +105,8 @@ class Configuration(BaseSettings):
     use_basic_authentication_with_access_code_grant: bool = False
     #: OAuth2 use PKCE with authorization code grant
     use_pkce_with_authorization_code_grant: bool = False
+    #: OAuth2 use fetch swagger css or js file from website at DEFAULT_PAGE_TEMPLATES, default unpkg website.
+    swagger_url:str = "https://unpkg.com/swagger-ui-dist@5.0.0"
 
     class Config:
         env_prefix = "spectree_"
