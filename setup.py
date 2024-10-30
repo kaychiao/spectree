@@ -6,6 +6,7 @@ setup(
     name="spectree",
     install_requires=[
         "pydantic>=1.2,<3",
+        "redis>=3.5.3"
     ],
     extras_require={
         "email": ["pydantic[email]>=1.2,<3"],
