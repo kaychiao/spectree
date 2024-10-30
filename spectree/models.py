@@ -193,3 +193,16 @@ class BaseFile:
     def validate(cls, value: Any):
         # https://github.com/luolingchun/flask-openapi3/blob/master/flask_openapi3/models/file.py
         return value
+
+
+class RedisConfigScheme(BaseModel):
+    """
+    Redis config scheme.
+    """
+    host: str = Field(None, description="Redis server host address", example="127.0.0.1")
+    port: int = Field(None, description="Redis server port number", example=7379)
+    passwd: str = Field(None, description="Password to authenticate with Redis", example="password")
+    db: int = Field(None, description="Redis database index", example=0)
+
+    class Config:
+        validate_assignment = True

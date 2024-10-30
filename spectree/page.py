@@ -49,6 +49,9 @@ DEFAULT_PAGE_TEMPLATES: Dict[str, str] = {
         <script src="{swagger_url}/swagger-ui-standalone-preset.js" crossorigin></script>
         <script>
         window.onload = function() {{
+        // Declare API keys configuration directly in JavaScript
+        var apiKeys = JSON.parse('{api_keys_json}');
+        
         var full = location.protocol + '//' + location.hostname + (location.port ? ':' + location.port : '');
         // Begin Swagger UI call region
         const ui = SwaggerUIBundle({{
@@ -63,7 +66,15 @@ DEFAULT_PAGE_TEMPLATES: Dict[str, str] = {
             SwaggerUIBundle.plugins.DownloadUrl
             ],
             oauth2RedirectUrl: full + "/{spec_path}/swagger/oauth2-redirect.html",
-            layout: "StandaloneLayout"
+            layout: "StandaloneLayout",
+            onComplete: function() {{
+                // Setup API keys for authorization only if they exist
+                if (apiKeys && apiKeys.length > 0) {{
+                    apiKeys.forEach(function(apiKey) {{
+                        ui.preauthorizeApiKey(apiKey.name, apiKey.value);
+                    }});
+                }}
+            }}
         }})
         ui.initOAuth({{
             clientId: "{client_id}",

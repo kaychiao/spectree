@@ -3,7 +3,7 @@ from enum import Enum
 from typing import TYPE_CHECKING, Any, Dict, List, Mapping, Optional, Union
 
 from ._pydantic import AnyUrl, BaseModel, BaseSettings, EmailStr, root_validator
-from .models import SecurityScheme, Server
+from .models import RedisConfigScheme, SecurityScheme, Server
 from .page import DEFAULT_PAGE_TEMPLATES
 
 # Fall back to a str field if email-validator is not installed.
@@ -107,6 +107,12 @@ class Configuration(BaseSettings):
     use_pkce_with_authorization_code_grant: bool = False
     #: OAuth2 use fetch swagger css or js file from website at DEFAULT_PAGE_TEMPLATES, default unpkg website.
     swagger_url:str = "https://unpkg.com/swagger-ui-dist@5.0.0"
+    #: OAuth2 use for connect Redis, include host, port, password, db.
+    # e.g. {'host': "127.0.0.1", 'port': 7379, 'passwd': "password",'db': 0,},
+    redis_config: Optional[RedisConfigScheme] = None
+    #：OAuth2 use for setup API keys for authorization, key is auth name of swagger, value is redis key.
+    # e.g. {"security_scheme_name": "redis_key"}. The key is name of SecuritySchemeData, value is the cache key of redis.
+    preauthorize_key: Optional[Dict[str, str]] = None
 
     class Config:
         env_prefix = "spectree_"

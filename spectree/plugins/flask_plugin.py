@@ -1,3 +1,4 @@
+import json
 from typing import Any, Callable, Mapping, Optional, Tuple, get_type_hints
 
 import flask
@@ -13,6 +14,7 @@ from spectree.utils import (
     get_multidict_items,
     werkzeug_parse_rule,
 )
+from spectree.libs.client_cache import RedisCache, CacheConfig
 
 
 class FlaskPlugin(BasePlugin):
@@ -237,6 +239,20 @@ class FlaskPlugin(BasePlugin):
 
         return response
 
+    def _fetch_auth_api_key_json(self):
+        _auth_keys = []
+
+        if not self.config.redis_config:
+            return []
+        else:
+            cache_config = CacheConfig(self.config.redis_config)
+            redis_cache = RedisCache(cache_config)
+            for ak, rk in self.config.preauthorize_key.items():
+                if redis_cache.cache_has(rk):
+                    token = redis_cache.cache_get(rk)
+                    _auth_keys.append({"name": "auth_user_id", "value": token})
+        return json.dumps(_auth_keys)
+
     def register_route(self, app):
         app.add_url_rule(
             rule=self.config.spec_url,
@@ -260,6 +276,7 @@ class FlaskPlugin(BasePlugin):
                     swagger_url=self.swagger_url,
                     spec_url=spec_url,
                     spec_path=self.config.path,
+                    api_keys_json=self._fetch_auth_api_key_json(),
                     **self.config.swagger_oauth2_config(),
                 )
 
@@ -280,6 +297,7 @@ class FlaskPlugin(BasePlugin):
                         swagger_url=self.swagger_url,
                         spec_url=self.config.spec_url,
                         spec_path=self.config.path,
+                        api_keys_json=self._fetch_auth_api_key_json(),
                         **self.config.swagger_oauth2_config(),
                     ),
                 )

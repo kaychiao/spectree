@@ -6,10 +6,35 @@ from flask.views import MethodView
 from pydantic import BaseModel, Field
 
 from examples.common import File, FileResp, Query
-from spectree import Response, SpecTree
+from spectree import Response, SpecTree, SecurityScheme
 
 app = Flask(__name__)
-spec = SpecTree("flask")
+spec = SpecTree(
+    "flask",
+    title="FLASK TEST API",
+    version="2.0",
+    security_schemes=[
+        SecurityScheme(
+            name="auth_user_id",
+            data={"type": "apiKey", "name": "user_id", "in": "header"},
+        ),
+        SecurityScheme(
+            name="auth_lock_id",
+            data={"type": "apiKey", "name": "lock_id", "in": "header"},
+        )
+    ],
+    security={"auth_user_id": []},
+    swagger_url=f'https://bio-orcnginx-test.brbiotech.tech/nginxStatic/swagger/unpkg',
+    redis_config={
+        'used': True,
+        'host': "172.16.117.7",
+        'port': 7379,
+        'passwd': "passwordBR",
+        'db': 0,
+    },
+    preauthorize_key={"user_id": "3c672b7a-e431-43a8-afo2-7423ecf4d9db"}
+    preauthorize_key={"auth_user_id": "userID:1", "auth_lock_id": ""}
+)
 
 
 class Resp(BaseModel):
